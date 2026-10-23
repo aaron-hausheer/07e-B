@@ -7,7 +7,7 @@ an incorrect calculation.
 
 ## Prerequisites
 
-- Node.js 22 or newer, npm, and Git.
+- Node.js 22.13 or newer, npm, and Git.
 - Write access to the group's public GitHub repository for publishing.
 
 ## Setup and Commands
@@ -16,17 +16,39 @@ Run these commands from the repository root:
 
 ```sh
 npm ci
+npm start
 npm run demo:format
 npm run format
 npm run format:check
+npm run lint
 npm test
 npm run check
 ```
 
 - `format` fixes formatting with Prettier.
 - `format:check` reports formatting problems without changing files.
+- `lint` runs ESLint's recommended JavaScript rules with Node and Mocha globals;
+  errors and warnings fail the command.
 - `test` runs Mocha tests using Node's built-in assertions.
-- `check` checks formatting, then runs tests only if formatting passes.
+- `check` checks formatting, lints, and tests without rewriting files (also used in CI).
+- `start` formats files, lints, tests, and only then starts the Node formatting demo.
+
+## Task 5: Startup Quality Gate
+
+The `start` script is:
+
+```json
+"start": "npm run format && npm run lint && npm test && node examples/formatting.js"
+```
+
+`&&` runs each command only if the previous one succeeds. Prettier fixes
+formatting first; ESLint then checks JavaScript issues, and Mocha checks behavior.
+If formatting cannot complete, linting fails, or a test fails, the app does not
+start. Fix the reported issue and run `npm start` again.
+
+`eslint.config.js` enables the recommended ESLint rules for JavaScript modules,
+Node globals, and Mocha globals in test files. It ignores generated coverage.
+The application entry point is the existing `examples/formatting.js` demo.
 
 ## Prettier and Mocha Example
 
@@ -88,7 +110,7 @@ After implementing and checking Part B, publish only its files:
 
 ```sh
 npm run check
-git add README.md package.json package-lock.json .gitignore .prettierignore .prettierrc.json src/calculator.js src/formatter.js examples/formatting.js test/calculator.test.js test/formatter.test.js .github/workflows/quality.yml
+git add README.md package.json package-lock.json eslint.config.js .gitignore .prettierignore .prettierrc.json src/calculator.js src/formatter.js examples/formatting.js test/calculator.test.js test/formatter.test.js .github/workflows/quality.yml
 git commit -m "Add Part B: Prettier, Mocha, and automated quality checks"
 git push -u origin poster-course
 ```
@@ -105,8 +127,9 @@ before the poster walk. Fix feedback on `poster-course` and push again.
    Run `npm run demo:format` to show before/after code and check results.
 3. **Task 4 (1 minute):** show the async formatting tests and `beforeEach` hook;
    run `npm test`. Contrast formatting checks with calculator behavior assertions.
-4. **Task 5 (1 minute):** show `npm run check` and the workflow in the PR.
-   Explain that a failed command makes the CI job fail.
+4. **Task 5 (1 minute):** run `npm start` to demonstrate format, lint, test, then
+   app startup. Show `npm run check` and the workflow in the PR; explain that a
+   failed command stops startup or makes the CI job fail.
 5. **Result (1 minute 30 seconds):** show the PR diff and checks, answer questions,
    and explain that CI reports failures but branch protection must be configured
    separately to block merging.
