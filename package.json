@@ -8,6 +8,7 @@
     "node": ">=22"
   },
   "scripts": {
+    "demo:format": "node examples/formatting.js",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "mocha",
