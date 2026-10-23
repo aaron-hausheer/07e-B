@@ -8,6 +8,10 @@
     "node": ">=22"
   },
   "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "mocha",
+    "check": "npm run format:check && npm test"
   },
   "devDependencies": {
     "mocha": "12.0.3",
